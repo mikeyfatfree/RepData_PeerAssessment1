@@ -7,7 +7,7 @@
 ######################################
 
 library(lattice)
-setwd("C:\\coursera\\Data Scientist\\courses\\5 - Reproducible Research\\project 1")
+
 activityDataOrig <- read.csv("activity.csv",na.strings="NA")
 
 ## convert date from factor to Date type
@@ -66,12 +66,11 @@ with(meanStepsByInterval, plot(Group.1, x, type="l", xlab="interval", ylab="step
 ```r
 maxInterval <- subset(meanStepsByInterval, x == max(meanStepsByInterval$x))
 
-print(sprintf("The 5-minute interval which contains the maximum number of steps is %s",maxInterval))
+print(sprintf("The 5-minute interval which contains the maximum number of steps is %s",maxInterval$Group.1))
 ```
 
 ```
-## [1] "The 5-minute interval which contains the maximum number of steps is 835"             
-## [2] "The 5-minute interval which contains the maximum number of steps is 206.169811320755"
+## [1] "The 5-minute interval which contains the maximum number of steps is 835"
 ```
 
 ```r
