@@ -8,6 +8,7 @@
 
 library(lattice)
 
+## read in the csv file
 activityDataOrig <- read.csv("activity.csv",na.strings="NA")
 
 ## convert date from factor to Date type
@@ -24,9 +25,6 @@ activityData <- activityDataOrig[ !is.na(activityDataOrig$steps),]
 ## group by date and sum the steps to calculate the total number of steps taken per day
 activitySumPerDay <- aggregate(activityData$steps, by=list(activityData$date), FUN=sum)
 
-## compute mean and median
-meanOfSum <- mean(activitySumPerDay$x)
-medianOfSum <- median(activitySumPerDay$x)
 
 ## plot histogram of the total steps per day
 hist(activitySumPerDay$x, xlab="steps", main="Total Number of Steps Taken per Day")
@@ -58,12 +56,14 @@ print(sprintf("The median of the total number of steps per day is %s", median(ac
 ## group by interval and take the mean of each group (number of steps)
 meanStepsByInterval <- aggregate(activityData$steps, by=list(activityData$interval), FUN="mean")
 
+## time series plot of interval and mean number of steps
 with(meanStepsByInterval, plot(Group.1, x, type="l", xlab="interval", ylab="steps", main="Average Number of Steps Taken Per 5 minute Interval"))
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-1-2.png)
 
 ```r
+## find which 5 minute interval is the maximum
 maxInterval <- subset(meanStepsByInterval, x == max(meanStepsByInterval$x))
 
 print(sprintf("The 5-minute interval which contains the maximum number of steps is %s",maxInterval$Group.1))
@@ -97,16 +97,17 @@ print("Our strategy for replacing NA values will be to use the average step per 
 ```
 
 ```r
-## merge activityData with average steps per interval data frame so we can replace NAs
+## merge original activityData with average steps per interval data frame so we can replace NAs
 newActivityData <- merge(activityDataOrig, meanStepsByInterval, by.x = "interval", by.y = "Group.1")
 
 ## replace NAs with average step per interval
 naIndices <- is.na(newActivityData$steps)
 newActivityData[ naIndices, ]$steps <- newActivityData[ naIndices, ]$x
 
-
+## group by date and sum up each group (number of steps)
 newActivitySumPerDay <- aggregate(newActivityData$steps, by=list(newActivityData$date), FUN=sum)
 
+## plot histogram - frequencies of total number of steps
 hist(newActivitySumPerDay$x, xlab="steps", main="Total Number of Steps Taken per Day")
 ```
 
@@ -153,7 +154,7 @@ print("By replacing the NA values with a mean value, the mean should not change 
 newActivityData$isWeekend <- grepl("Saturday|Sunday",weekdays(newActivityData$date))
 newActivityData$weekend <- factor(newActivityData$isWeekend,labels = c("weekend","weekday"))
 
-## group by interval, weekend/weekday and average the groups (steps)
+## group by interval, weekend/weekday and average the groups (number of steps)
 newMeanStepsByInterval <- aggregate(newActivityData$steps, by=list(newActivityData$interval, newActivityData$weekend), FUN="mean")
 
 ## plot lattice panel plot
